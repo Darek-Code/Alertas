@@ -9,6 +9,7 @@ server.use(helmet());
 server.use(bodyParser.json());
 
 server.post('/user', mainController.insertUser);
+server.get('/user/:_id', mainController.getUserById);
 
 const PORT = process.env.PORT;
 
