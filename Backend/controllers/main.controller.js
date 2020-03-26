@@ -18,24 +18,37 @@ exports.insertUser = async (req, res) => {
     // Validar el body
     const bodyErrors = validationResult(req);
     if (bodyErrors.isEmpty()) {
-        const hash = await bcrypt.hash(req.body.password, 14)
-        const newUser = new users({
-            "_id": mongoose.Types.ObjectId(),
-            "username": req.body.username,
-            "hash": hash,
-            "email": req.body.email
-        });
 
-        try {
-            const result = await newUser.save();
-            res.send(result);
-        } catch (error) {
-            res.send(
-                {
-                    "error": "Error interno al crear el usuario",
-                    "causa": error
-                }
-            )
+        // Comprobar si el usario ya existe
+        const potentialDuplicate = await users.find({
+            $or: [
+                { "username": req.body.username },
+                { "email": req.body.email }
+            ]
+
+        });
+        if (potentialDuplicate.length > 0) {
+            res.status(400).send({ "error": "usuario ya existente" })
+        } else {
+            const hash = await bcrypt.hash(req.body.password, 14)
+            const newUser = new users({
+                "_id": mongoose.Types.ObjectId(),
+                "username": req.body.username,
+                "hash": hash,
+                "email": req.body.email
+            });
+
+            try {
+                const result = await newUser.save();
+                res.send(result);
+            } catch (error) {
+                res.send(
+                    {
+                        "error": "Error interno al crear el usuario",
+                        "causa": error
+                    }
+                )
+            }
         }
 
     } else {
