@@ -56,11 +56,28 @@ exports.insertUser = async (req, res) => {
     }
 }
 
+// 2.- Get single user
+
 exports.getUserById = async (req, res) => {
     const _id = req.params._id;
     try {
         //Buscar usuario
         const result = await users.findById(_id);
+        res.send(result)
+    } catch (error) {
+        res.send({
+            "error": "No se ha podido encontrar al usuario",
+            "causa": error
+        })
+    }
+}
+
+// 3. -Get all users
+
+exports.getAllUsers = async (req, res) => {
+    try {
+        //Buscar usuarios
+        const result = await users.find();
         res.send(result)
     } catch (error) {
         res.send({
