@@ -12,6 +12,7 @@ server.post('/user', mainController.insertUser);
 server.get('/user/:_id', mainController.getUserById);
 server.get('/users', mainController.getAllUsers);
 server.put('/user', mainController.updateUser);
+server.delete('/user/:_id', mainController.deleteUser);
 
 const PORT = process.env.PORT;
 
