@@ -11,9 +11,11 @@ server.use(bodyParser.json());
 server.post('/user', mainController.insertUser);
 server.get('/user/:_id', mainController.getUserById);
 server.get('/users', mainController.getAllUsers);
+server.put('/user', mainController.updateUser);
 
 const PORT = process.env.PORT;
 
 server.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`)
-});
+})
+

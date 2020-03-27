@@ -86,3 +86,40 @@ exports.getAllUsers = async (req, res) => {
         })
     }
 }
+
+// 4.- Update user
+exports.updateUser = async (req, res) => {
+    // Validar el body
+    const bodyErrors = validationResult(req);
+    if (bodyErrors.isEmpty()) {
+        const _id = req.body._id;
+
+        const changes = {
+            "username": req.body.username,
+            "email": req.body.email,
+        }
+
+        // Comprobar sisequiere cambiar la contraseña
+        if (req.body["password"] !== undefined) {
+            const hash = await bcrypt.hash(req.body["password"], 14);
+            changes["hash"] = hash;
+        }
+
+        try {
+            // Actualizarel usuario
+            const result = await users.findByIdAndUpdate(_id, {
+                $set: changes
+            })
+            res.send({ "OK": `Usuario con el id ${result._id} actualizado!` })
+        } catch (error) {
+            res.send(
+                {
+                    "error": "Error interno al actualizar el usuario",
+                    "causa": error
+                }
+            )
+        }
+    } else {
+        res.status(400).send({ "error": "Body mal formado" })
+    }
+}
